@@ -44,3 +44,10 @@ steps:
     pathtoPublish: '$(Build.artifactstagingdirectory)'
     artifactName: 'BlazorLeaflet'
   condition: succeededOrFailed()
+
+- task: NuGetCommand@2
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+    nuGetFeedType: 'internal'
+    publishVstsFeed: 'c627ab72-9d60-49a3-884b-ef9d060fb5c5/a74d2c1b-3b9f-42dd-9748-fcd6f6daf7d9'

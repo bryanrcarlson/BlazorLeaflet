@@ -27,3 +27,35 @@ steps:
     msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: BlazorLeaflet/BlazorLeaflet
+    Contents: |
+     **\bin\$(BuildConfiguration)\netstandard2.0\BlazorLeaflet.dll
+    TargetFolder: '$(build.artifactstagingdirectory)'
+    CleanTargetFolder: true
+  
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: BlazorLeaflet/BlazorLeaflet
+    Contents: '**BlazorLeaflet.nuspec'
+    TargetFolder: '$(build.artifactstagingdirectory)\bin\$(BuildConfiguration)'
+
+- task: NuGetCommand@2
+  inputs:
+    command: pack
+    packagesToPack: '$(build.artifactstagingdirectory)\bin\$(BuildConfiguration)\BlazorLeaflet.nuspec'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)'
+    ArtifactName: '$(Parameters.ArtifactName)'
+  condition: succeededOrFailed()
+
+- task: NuGetCommand@2
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+    nuGetFeedType: 'internal'
+    publishVstsFeed: 'c627ab72-9d60-49a3-884b-ef9d060fb5c5/a74d2c1b-3b9f-42dd-9748-fcd6f6daf7d9'

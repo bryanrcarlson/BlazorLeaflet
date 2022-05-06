@@ -50,6 +50,11 @@ namespace BlazorLeaflet
         }
 
         /// <summary>
+        /// Map bounds
+        /// </summary>
+        public Bounds Bounds { get; private set; }
+
+        /// <summary>
         /// Minimum zoom level of the map. If not specified and at least one 
         /// GridLayer or TileLayer is in the map, the lowest of their minZoom
         /// options will be used instead.
@@ -105,6 +110,7 @@ namespace BlazorLeaflet
         {
             _isInitialized = true;
             OnInitialized?.Invoke();
+            RunTaskInBackground(UpdateBounds);
         }
 
         private async void RunTaskInBackground(Func<Task> task)
@@ -213,9 +219,15 @@ namespace BlazorLeaflet
         }
 
         public async Task<LatLng> GetCenter() => await LeafletInterops.GetCenter(_jsRuntime, Id);
-        public async Task<float> GetZoom() => 
-            await LeafletInterops.GetZoom(_jsRuntime, Id);
-        public async Task<LatLngBounds> GetBounds() => await LeafletInterops.GetBounds(_jsRuntime, Id);
+        public async Task<float> GetZoom() => await LeafletInterops.GetZoom(_jsRuntime, Id);
+        public async Task<Bounds> GetBounds() => await LeafletInterops.GetBounds(_jsRuntime, Id);
+
+
+        private async Task UpdateBounds()
+        {
+            Bounds = await GetBounds();
+            OnBoundsChanged?.Invoke(this, new EventArgs());
+        }
 
         /// <summary>
         /// Increases the zoom level by one notch.
@@ -302,7 +314,11 @@ namespace BlazorLeaflet
         {
             try
             {
-                await UpdateZoom();
+                await UpdateBounds();
+            }
+            catch (Exception ex)
+            {
+                NotifyBackgroundExceptionOccurred(ex);
             }
             finally
             {
@@ -316,13 +332,18 @@ namespace BlazorLeaflet
         {
             try
             {
-                await UpdateCenter();
+                await UpdateBounds();
+            }
+            catch (Exception ex)
+            {
+                NotifyBackgroundExceptionOccurred(ex);
             }
             finally
             {
                 OnMoveEnd?.Invoke(this, e);
             }
         }
+        public event EventHandler OnBoundsChanged;
 
         public event MouseEventHandler OnMouseMove;
         [JSInvokable]

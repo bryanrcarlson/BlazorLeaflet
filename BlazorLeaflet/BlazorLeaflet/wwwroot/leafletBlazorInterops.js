@@ -266,9 +266,6 @@ window.leafletBlazor = {
     getZoom: function (mapId) {
         return maps[mapId].getZoom();
     },
-    getBounds: function (mapId) {
-        return maps[mapId].getBounds();
-    },
     zoomIn: function (mapId, e) {
         const map = maps[mapId];
 
@@ -288,6 +285,7 @@ window.leafletBlazor = {
     },
     setZoom: function (mapId, zoomLevel) {
         maps[mapId].setZoom(zoomLevel);
+    },
     openPopupOnMap: function (mapId, mapPopupData) {
         var pu = L.popup()
             .setLatLng(mapPopupData.latLng)

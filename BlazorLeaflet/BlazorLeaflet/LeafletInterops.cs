@@ -92,8 +92,20 @@ namespace BlazorLeaflet
             await jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.setZoom", mapId, zoomLevel);
         }
 
-        public static ValueTask<LatLngBounds> GetBounds(IJSRuntime jsRuntime, string mapId) =>
-            jsRuntime.InvokeAsync<LatLngBounds>($"{_BaseObjectContainer}.getBounds", mapId);
+        // Private class only for deserialization from JSON (since the JSON names on the bounds are "_southWest"
+        // with the _). Since deserialization in JSRuntime is non-customizable, this is a good solution for now.
+        private class _Bounds
+        {
+            public LatLng _southWest { get; set; }
+            public LatLng _northEast { get; set; }
+
+            public Bounds AsBounds() => new Bounds(_southWest, _northEast);
+        }
+
+        public static async Task<Bounds> GetBounds(IJSRuntime jsRuntime, string mapId)
+        {
+            return (await jsRuntime.InvokeAsync<_Bounds>($"{_BaseObjectContainer}.getBounds", mapId)).AsBounds();
+        }
 
         public static ValueTask ZoomIn(IJSRuntime jsRuntime, string mapId, MouseEventArgs e) =>
             jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.zoomIn", mapId, e);

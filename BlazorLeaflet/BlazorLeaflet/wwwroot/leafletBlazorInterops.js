@@ -287,6 +287,14 @@ window.leafletBlazor = {
     },
     setZoom: function (mapId, zoomLevel) {
         maps[mapId].setZoom(zoomLevel);
+    openPopupOnMap: function (mapId, mapPopupData) {
+        var pu = L.popup()
+            .setLatLng(mapPopupData.latLng)
+            .setContent(mapPopupData.content);
+        maps[mapId].openPopup(pu);
+    },
+    closePopupOnMap: function (mapId) {
+        maps[mapId].closePopup();
     }
 };
 

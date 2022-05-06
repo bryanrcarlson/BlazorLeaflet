@@ -240,6 +240,19 @@ namespace BlazorLeaflet
             
             _Center = await GetCenter();
         }
+        /// <summary>
+        /// Opens up a popup on the map at the desired location with the specified content.
+        /// Opening up a new popup closes any previous open popup.
+        /// </summary>
+        /// <param name="mapPopupData">Container for LatLng and Content of popup</param>
+        public async Task OpenMapPopup(MapPopupData mapPopupData) => await LeafletInterops.OpenPopupOnMap(_jsRuntime, Id, mapPopupData);
+
+        /// <summary>
+        /// Closes any popup on the map.
+        /// </summary>
+        public async Task CloseMapPopup() => await LeafletInterops.ClosePopupOnMap(_jsRuntime, Id);
+
+
 
         #region events
 

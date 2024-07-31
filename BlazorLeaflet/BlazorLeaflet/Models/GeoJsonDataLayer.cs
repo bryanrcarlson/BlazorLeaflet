@@ -24,7 +24,10 @@ namespace BlazorLeaflet.Models
 
             return new { Layer = layer, Ref = DotNetObjectReference.Create(layer) };
         }
+
+
     }
+
 
     public class GeoJsonFeature
     {

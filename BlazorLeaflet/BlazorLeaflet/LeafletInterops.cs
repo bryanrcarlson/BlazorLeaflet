@@ -65,6 +65,12 @@ namespace BlazorLeaflet
         public static ValueTask UpdateTooltipContent(IJSRuntime jsRuntime, string mapId, Layer layer) =>
             jsRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.updateTooltipContent", mapId, layer.Id, layer.Tooltip?.Content);
 
+        public static ValueTask SetStyle(IJSRuntime jSRuntime, string mapId, Layer layer, Style style) =>
+            layer switch
+            {
+                GeoJsonDataLayer geojson => jSRuntime.InvokeVoidAsync($"{_BaseObjectContainer}.setStyleGeoJson", mapId, layer.Id, style),
+                _ => throw new NotImplementedException($"The layer {typeof(Layer).Name} has not been implemented."),
+            };
         public static ValueTask UpdateShape(IJSRuntime jsRuntime, string mapId, Layer layer) =>
             layer switch
             {

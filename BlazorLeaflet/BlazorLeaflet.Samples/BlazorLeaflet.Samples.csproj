@@ -5,4 +5,9 @@
   <ItemGroup>
     <ProjectReference Include="..\BlazorLeaflet\BlazorLeaflet.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Update="Pages\GeoJsonPolygonStyles.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+  </ItemGroup>
 </Project>

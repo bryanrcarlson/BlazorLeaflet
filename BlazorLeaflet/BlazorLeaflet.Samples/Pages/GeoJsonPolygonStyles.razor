@@ -1,0 +1,103 @@
+﻿@page "/geojsonpolygonstyles"
+
+@using BlazorLeaflet.Models
+@using BlazorLeaflet.Models.Events
+@inject IJSRuntime jsRuntime
+
+<h1>Blazor Leaflet</h1>
+
+<p>
+    This page demos GeoJSON layers.
+</p>
+
+<p>
+    By default, each point in a GeoJSON layer is just a normal marker. Instead,
+    you can optionally set <code>PointToLayer</code> to a method that
+    customizes the layer each point corresponds to. Currently, only markers are
+    supported.
+</p>
+
+<div style="height: 500px; width: 500px;">
+    <LeafletMap Map="_map" />
+</div>
+
+@code
+{
+    private Map _map;
+    private LatLng _markerLatLng = new LatLng { Lat = 47f, Lng = -118.5f };
+
+    protected override void OnInitialized()
+    {
+        var waPolygon = @"
+{
+""type"": ""FeatureCollection"",
+  ""features"": [
+    {
+      ""type"": ""Feature"",
+      ""properties"": { },
+      ""geometry"": {
+        ""coordinates"": [
+          [
+            [
+              -118.71701342803175,
+              48.10779132597685
+            ],
+            [
+              -119.7045908096124,
+              47.23463801453252
+            ],
+            [
+              -119.06971933575369,
+              46.520305602865704
+            ],
+            [
+              -117.6382578822184,
+              46.94561735095158
+            ],
+            [
+              -118.71701342803175,
+              48.10779132597685
+            ]
+          ]
+        ],
+        ""type"": ""Polygon""
+      }
+    }
+  ]
+}
+";
+
+        var dataLayer = new GeoJsonDataLayer
+        {
+            GeoJsonData = waPolygon
+        };
+
+        _map = new Map(jsRuntime)
+        {
+            Center = _markerLatLng,
+            Zoom = 4.8f
+        };
+
+        _map.OnInitialized += () =>
+        {
+            _map.AddLayer(new TileLayer
+            {
+                UrlTemplate = "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                Attribution = "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
+            });
+
+            _map.AddLayer(dataLayer);
+
+            Style style = new Style()
+            {
+                Color = "green",
+                FillColor = "green",
+                FillOpacity = 0.5f,
+                Weight = 3
+            };
+
+            LeafletInterops.SetStyle(jsRuntime, _map.Id, dataLayer, style);
+
+        };
+    }
+}

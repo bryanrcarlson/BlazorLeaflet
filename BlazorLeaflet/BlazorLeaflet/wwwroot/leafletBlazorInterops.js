@@ -207,10 +207,10 @@ window.leafletBlazor = {
     setStyleGeoJson: function (mapId, layerId, style) {
         let geojsonlayer = layers[mapId].find(l => l.id === layerId);
         geojsonlayer.setStyle({
-            color: style.color, // New line color
-            weight: style.weight,    // New line width
-            fillColor: style.fillColor, // New fill color
-            fillOpacity: style.fillOpacity // New fill opacity
+            color: style.color,
+            weight: style.weight,
+            fillColor: style.fillColor,
+            fillOpacity: style.fillOpacity
         });
     },
     addWmsLayer: function (mapId, wms, objectReference) {
